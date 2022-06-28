@@ -1,3 +1,4 @@
+import { Avatar } from "./Avatar";
 import { Container, Img } from "./styled";
 
 export function Sidebar () {
@@ -12,7 +13,7 @@ export function Sidebar () {
             
             <div>
                 <Img>
-                <img src="https://github.com/mateuscarvalhodev.png" />
+                <Avatar src="https://github.com/mateuscarvalhodev.png" />
                 </Img>
                 <strong>Mateus Carvalho</strong>
                 <span>Web Developer</span>
