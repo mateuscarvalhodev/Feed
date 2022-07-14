@@ -1,11 +1,20 @@
 import {format, formatDistanceToNow} from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR'
+import { useState } from 'react';
 
 import { Avatar } from './Avatar';
 import { Comments } from './Comments';
 import styles from './Post.module.css';
 
-export function Post({author, publishedAt}) {
+
+
+export function Post({author, publishedAt, content}) {
+    const [comments, setComments] = useState([
+        'Parabéns, muito legal'
+    ]);
+
+const [newCommentText, setNewCommentText] = useState('')
+
     const publishedDateFormatted = format(publishedAt, "d 'de' LLLL 'as' HH:mm'h'", {
         locale: ptBR, 
     })
@@ -15,6 +24,24 @@ export function Post({author, publishedAt}) {
         addSuffix: true
         
     })
+
+    function handleCreateNewComment() {
+        event.preventDefault();
+
+        
+
+        setComments([...comments, newCommentText]);
+        setNewCommentText('');
+
+        
+
+        
+    }
+
+    function handleNewCommentChange() {
+        setNewCommentText(event.target.value);
+    }
+
     return(
         <>
         <article className={styles.post}>
@@ -27,22 +54,29 @@ export function Post({author, publishedAt}) {
                     </div>
                 </div>
 
-                <time title={publishedDateFormatted} dateTime="2022-05-11 08:13:30">
+                <time title={publishedDateFormatted} dateTime={publishedAt.toISOString()}>
                     {publishedDateRelativeToNow}
                     </time>
             </header>
 
             <div className={styles.content}>
-                <p>Fala galera</p>
-                <p>Acabei de subir mais um projeto pro meu portFolio. É um projeto que fiz durante o ignite</p>
-                <p><a href="https://github.com/mateuscarvalhodev" target="_blank"> github.com/mateuscarvalhodev</a></p>
+                {content.map(line => {
+                    if(line.type === 'paragraph') {
+                        return <p key={line.content}>{line.content}</p>;
+                    } else if (line.type === 'link') {
+                        return <p key={line.content}><a href="#">{line.content}</a></p>
+                    }
+                })}
             </div>
 
-            <form className={styles.commentForm}>
+            <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
                 <strong>Deixe seu Feedback</strong>
 
                 <textarea 
+                name="comment"
                 placeholder="Deixe um comentário"
+                value={newCommentText}
+                onChange={handleNewCommentChange}
                 />
                 <footer>
                 <button type="submit">Publicar</button>
@@ -50,9 +84,11 @@ export function Post({author, publishedAt}) {
             </form>
             
             <div className={styles.commentList}>
-                <Comments />
-                <Comments />
-                <Comments />
+                {comments.map(comment => {
+                    return <Comments 
+                    key={comment}
+                    content={comment} />
+                })}
             </div>
         </article>
         </>
